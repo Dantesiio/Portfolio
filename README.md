@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portafolio Next.js + API JWT
 
-## Getting Started
+Portafolio personal construido con Next.js (App Router) y TypeScript. El mismo proyecto expone un backend ligero para registro e inicio de sesión con JSON Web Tokens (JWT) opcionales: cualquier visitante puede navegar el contenido, pero si se autentica verá su nombre en la barra superior.
 
-First, run the development server:
+## ✨ Características clave
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- UI limpia con navbar fija, secciones de proyectos, experiencia y contacto.
+- Modal unificado de login/registro; el estado autenticado se guarda en `localStorage`.
+- API REST en `/api/auth/*` (registro, login y consulta de perfil) firmada con JWT de 7 días.
+- Almacenamiento en memoria para usuarios (ideal para demos) con hashing de contraseñas (`bcryptjs`).
+- Suite de pruebas (unitarias e integrales) con Vitest + Testing Library.
+
+## 🛠️ Stack principal
+
+- Next.js 15 · React 19 · TypeScript
+- pnpm como gestor de paquetes
+- `jsonwebtoken` + `bcryptjs` para autenticación
+- Vitest, Testing Library y jsdom para pruebas
+
+## 🗂️ Estructura del proyecto
+
+```
+.
+├── public/                 # Activos estáticos (favicon, imágenes, etc.)
+├── src/
+│   ├── app/
+│   │   ├── api/auth/       # Route handlers: register, login y me
+│   │   ├── layout.tsx      # Layout raíz con AuthProvider y Navbar
+│   │   └── page.tsx        # Contenido principal del portafolio
+│   ├── components/
+│   │   ├── auth/           # AuthProvider y componentes del modal
+│   │   └── navbar/         # Navbar y estilos asociados
+│   ├── lib/                # Utilidades (JWT, contraseñas, cliente HTTP)
+│   └── server/             # Tipos y store en memoria para usuarios
+├── vitest.config.ts        # Configuración de Vitest (alias, coverage, jsdom)
+├── vitest.setup.ts         # Setup de Testing Library y polyfills
+└── package.json
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## ✅ Requisitos previos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 18 o superior (recomendado 20+)
+- pnpm `>= 8`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔐 Variables de entorno
 
-## Learn More
+En desarrollo se usa un secreto por defecto, pero en producción define un archivo `.env.local`:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+JWT_SECRET="coloca_aqui_una_clave_segura_de_16+_caracteres"
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🚀 Cómo correr el proyecto
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Instala dependencias y arranca el servidor de desarrollo:
 
-## Deploy on Vercel
+```bash
+pnpm install
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+El sitio quedará disponible en [http://localhost:3000](http://localhost:3000).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Otros scripts útiles
+
+```bash
+pnpm build         # Compila el proyecto (Next.js + Turbopack)
+pnpm start         # Sirve la build de producción
+pnpm lint          # Ejecuta ESLint
+pnpm test          # Corre pruebas unitarias e integrales
+pnpm test:watch    # Vitest en modo watch
+pnpm test:coverage # Genera reporte de cobertura (coverage/)
+```
+
+## 🧪 Pruebas incluidas
+
+- **Unitarias**: utilidades de JWT (`src/lib/jwt.ts`) y hashing de contraseñas (`src/lib/password.ts`).
+- **Integración**: flujo completo de registro/login sobre los route handlers (`src/app/api/auth/__tests__`).
+
+El reporte HTML de cobertura queda en `coverage/index.html` tras ejecutar `pnpm test:coverage`.
+
+## 🔄 Flujo de autenticación opcional
+
+1. Desde la navbar, abre el modal para registrarte o iniciar sesión.
+2. El registro crea un usuario en memoria, devuelve un JWT y almacena el token en `localStorage`.
+3. Si el token existe al recargar, el `AuthProvider` recupera el perfil mediante `/api/auth/me`.
+4. Cerrar sesión elimina el token local y restaura la interfaz pública.
+
+## 📌 Próximos pasos sugeridos
+
+- Persistir usuarios en una base de datos real (PostgreSQL, MongoDB, etc.).
+- Añadir páginas o rutas protegidas que exijan autenticación.
+- Internacionalizar el contenido y conectar los proyectos a un CMS.

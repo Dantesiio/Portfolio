@@ -1,0 +1,148 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.75);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+@media (prefers-color-scheme: dark) {
+  .header {
+    background: rgba(10, 10, 10, 0.75);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}
+
+.navbar {
+  margin: 0 auto;
+  max-width: 1100px;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.brandDot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb, #7928ca);
+}
+
+.links {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.links a {
+  opacity: 0.85;
+  transition: opacity 0.2s ease;
+}
+
+.links a:hover {
+  opacity: 1;
+}
+
+.actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.loginButton,
+.userButton {
+  padding: 0.55rem 1.1rem;
+  border-radius: 999px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+}
+
+.loginButton {
+  background: linear-gradient(135deg, #2563eb, #7928ca);
+  color: white;
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.25);
+}
+
+.loginButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.loginButton:not(:disabled):hover {
+  transform: translateY(-1px);
+}
+
+.userButton {
+  background: rgba(0, 0, 0, 0.05);
+  color: inherit;
+}
+
+@media (prefers-color-scheme: dark) {
+  .userButton {
+    background: rgba(255, 255, 255, 0.08);
+  }
+}
+
+.userMenu {
+  position: relative;
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  min-width: 180px;
+  border-radius: 12px;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.dropdown button {
+  background: none;
+  border: none;
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.dropdown button:hover {
+  background: rgba(37, 99, 235, 0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .dropdown {
+    background: rgba(15, 23, 42, 0.95);
+  }
+}
+
+@media (max-width: 780px) {
+  .links {
+    display: none;
+  }
+
+  .navbar {
+    padding: 0.75rem 1rem;
+  }
+}
