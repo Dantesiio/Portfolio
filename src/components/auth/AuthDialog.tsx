@@ -136,3 +136,6 @@ export const AuthDialog = ({ open, onClose }: AuthDialogProps) => {
     </Modal>
   );
 };
+
+// Obsoleto: el flujo de autenticación ahora vive en /auth
+export {};

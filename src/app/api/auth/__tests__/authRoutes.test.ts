@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { POST as registerRoute } from "@/app/api/auth/register/route";
 import { POST as loginRoute } from "@/app/api/auth/login/route";
@@ -100,5 +100,36 @@ describe("auth API routes", () => {
     );
 
     expect(response.status).toBe(401);
+  });
+
+  it("devuelve un error descriptivo si falta JWT_SECRET en producción", async () => {
+  process.env.JWT_SECRET = "";
+  vi.stubEnv("NODE_ENV", "production");
+
+    const response = await registerRoute(
+      createRequest("http://localhost/api/auth/register", {
+        name: "Failing User",
+        email: "failing@example.com",
+        password: "passwordsegura",
+      })
+    );
+
+    expect(response.status).toBe(500);
+    const payload = (await response.json()) as { message: string };
+    expect(payload.message).toMatch(/JWT_SECRET/i);
+
+    vi.unstubAllEnvs();
+
+    process.env.JWT_SECRET = "test-secret-key-123456";
+
+    const retry = await registerRoute(
+      createRequest("http://localhost/api/auth/register", {
+        name: "Passing User",
+        email: "passing@example.com",
+        password: "passwordsegura",
+      })
+    );
+
+    expect(retry.status).toBe(201);
   });
 });

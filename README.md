@@ -5,7 +5,7 @@ Portafolio personal construido con Next.js (App Router) y TypeScript. El mismo p
 ## ✨ Características clave
 
 - UI limpia con navbar fija, secciones de proyectos, experiencia y contacto.
-- Modal unificado de login/registro; el estado autenticado se guarda en `localStorage`.
+- Pantalla dedicada en `/auth` para login/registro; el estado autenticado se guarda en `localStorage`.
 - API REST en `/api/auth/*` (registro, login y consulta de perfil) firmada con JWT de 7 días.
 - Almacenamiento en memoria para usuarios (ideal para demos) con hashing de contraseñas (`bcryptjs`).
 - Suite de pruebas (unitarias e integrales) con Vitest + Testing Library.
@@ -28,7 +28,7 @@ Portafolio personal construido con Next.js (App Router) y TypeScript. El mismo p
 │   │   ├── layout.tsx      # Layout raíz con AuthProvider y Navbar
 │   │   └── page.tsx        # Contenido principal del portafolio
 │   ├── components/
-│   │   ├── auth/           # AuthProvider y componentes del modal
+│   │   ├── auth/           # AuthProvider y página de autenticación
 │   │   └── navbar/         # Navbar y estilos asociados
 │   ├── lib/                # Utilidades (JWT, contraseñas, cliente HTTP)
 │   └── server/             # Tipos y store en memoria para usuarios
@@ -44,11 +44,13 @@ Portafolio personal construido con Next.js (App Router) y TypeScript. El mismo p
 
 ## 🔐 Variables de entorno
 
-En desarrollo se usa un secreto por defecto, pero en producción define un archivo `.env.local`:
+En desarrollo se usa un secreto por defecto, pero en producción define un archivo `.env.local` (puedes partir de `.env.example`):
 
 ```bash
 JWT_SECRET="coloca_aqui_una_clave_segura_de_16+_caracteres"
 ```
+
+Sin este valor, los endpoints `/api/auth/register` y `/api/auth/login` devolverán un error 500 al intentar generar el JWT.
 
 ## 🚀 Cómo correr el proyecto
 
@@ -81,7 +83,7 @@ El reporte HTML de cobertura queda en `coverage/index.html` tras ejecutar `pnpm 
 
 ## 🔄 Flujo de autenticación opcional
 
-1. Desde la navbar, abre el modal para registrarte o iniciar sesión.
+1. Desde la navbar, ve a la página `/auth` para registrarte o iniciar sesión.
 2. El registro crea un usuario en memoria, devuelve un JWT y almacena el token en `localStorage`.
 3. Si el token existe al recargar, el `AuthProvider` recupera el perfil mediante `/api/auth/me`.
 4. Cerrar sesión elimina el token local y restaura la interfaz pública.

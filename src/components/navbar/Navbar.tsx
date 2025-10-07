@@ -3,22 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 
-import { AuthDialog } from "@/components/auth/AuthDialog";
 import { useAuth } from "@/components/auth/AuthProvider";
 
 import styles from "./Navbar.module.css";
 
 export const Navbar = () => {
   const { user, logout, loading } = useAuth();
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-
-  const openDialog = () => {
-    setDialogOpen(true);
-    setMenuOpen(false);
-  };
-
-  const closeDialog = () => setDialogOpen(false);
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
@@ -27,42 +18,48 @@ export const Navbar = () => {
     setMenuOpen(false);
   };
 
+  let authControl: React.ReactNode;
+  if (user) {
+    authControl = (
+      <div className={styles.userMenu}>
+        <button onClick={toggleMenu} className={styles.userButton}>
+          {user.name}
+        </button>
+        {menuOpen ? (
+          <div className={styles.dropdown}>
+            <button onClick={handleLogout}>Cerrar sesión</button>
+          </div>
+        ) : null}
+      </div>
+    );
+  } else if (loading) {
+    authControl = (
+      <button className={styles.loginButton} disabled>
+        Cargando...
+      </button>
+    );
+  } else {
+    authControl = (
+      <Link href="/auth" className={styles.loginButton}>
+        Iniciar sesión
+      </Link>
+    );
+  }
+
   return (
     <header className={styles.header}>
       <nav className={styles.navbar}>
-        <Link href="#inicio" className={styles.brand}>
+        <Link href="/#inicio" className={styles.brand}>
           <span aria-hidden className={styles.brandDot} />
           <span>Mi Portafolio</span>
         </Link>
         <div className={styles.links}>
-          <a href="#proyectos">Proyectos</a>
-          <a href="#experiencia">Experiencia</a>
-          <a href="#contacto">Contacto</a>
+          <Link href="/#proyectos">Proyectos</Link>
+          <Link href="/#experiencia">Experiencia</Link>
+          <Link href="/#contacto">Contacto</Link>
         </div>
-        <div className={styles.actions}>
-          {user ? (
-            <div className={styles.userMenu}>
-              <button onClick={toggleMenu} className={styles.userButton}>
-                {user.name}
-              </button>
-              {menuOpen ? (
-                <div className={styles.dropdown}>
-                  <button onClick={handleLogout}>Cerrar sesión</button>
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <button
-              onClick={openDialog}
-              className={styles.loginButton}
-              disabled={loading}
-            >
-              {loading ? "Cargando..." : "Iniciar sesión"}
-            </button>
-          )}
-        </div>
+        <div className={styles.actions}>{authControl}</div>
       </nav>
-      <AuthDialog open={dialogOpen} onClose={closeDialog} />
     </header>
   );
 };

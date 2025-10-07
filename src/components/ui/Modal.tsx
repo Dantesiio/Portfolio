@@ -45,3 +45,5 @@ export const Modal = ({ title, open, onClose, children }: ModalProps) => {
     </div>
   );
 };
+
+export {};

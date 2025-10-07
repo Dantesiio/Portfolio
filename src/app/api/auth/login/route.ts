@@ -56,8 +56,22 @@ export async function POST(request: Request) {
 
   const publicUser = toPublicUser(user);
 
-  return NextResponse.json({
-    user: publicUser,
-    token: createAuthToken(publicUser),
-  });
+  try {
+    const token = createAuthToken(publicUser);
+
+    return NextResponse.json({
+      user: publicUser,
+      token,
+    });
+  } catch (error) {
+    console.error("Failed to create auth token during login", error);
+
+    return NextResponse.json(
+      {
+        message:
+          "No se pudo generar el token de autenticación. Verifica la variable JWT_SECRET.",
+      },
+      { status: 500 }
+    );
+  }
 }

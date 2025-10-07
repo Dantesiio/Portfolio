@@ -52,21 +52,37 @@ export async function POST(request: Request) {
 
   const passwordHash = await hashPassword(password);
 
-  const user = userStore.save({
+  const user = {
     id: crypto.randomUUID(),
     name,
     email,
     passwordHash,
     createdAt: new Date(),
-  });
+  };
 
   const publicUser = toPublicUser(user);
 
-  return NextResponse.json(
-    {
-      user: publicUser,
-      token: createAuthToken(publicUser),
-    },
-    { status: 201 }
-  );
+  try {
+    const token = createAuthToken(publicUser);
+
+    userStore.save(user);
+
+    return NextResponse.json(
+      {
+        user: publicUser,
+        token,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Failed to create auth token during register", error);
+
+    return NextResponse.json(
+      {
+        message:
+          "No se pudo generar el token de autenticación. Verifica la variable JWT_SECRET.",
+      },
+      { status: 500 }
+    );
+  }
 }
