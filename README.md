@@ -81,6 +81,28 @@ pnpm test:coverage # Genera reporte de cobertura (coverage/)
 
 El reporte HTML de cobertura queda en `coverage/index.html` tras ejecutar `pnpm test:coverage`.
 
+## 🧭 Calidad y seguridad automatizada
+
+Este repositorio incluye workflows de GitHub Actions para mantener la calidad del código y la seguridad al día.
+
+### SonarCloud
+
+- Workflow: `.github/workflows/sonarcloud.yml`
+- Ejecuta `pnpm test:coverage` y envía los resultados a SonarCloud.
+- Configura los siguientes secretos en tu repositorio antes de ejecutar el pipeline:
+	- `SONAR_TOKEN`: token generado desde SonarCloud.
+	- `SONAR_PROJECT_KEY`: identificador único del proyecto (por ejemplo, `mi-org_portfolio`).
+	- `SONAR_ORGANIZATION`: organización de SonarCloud.
+- Opcional: añade tu enlace de SonarCloud al README para compartir el reporte público.
+
+### Trivy Security
+
+- Workflow: `.github/workflows/trivy.yml`
+- Realiza un escaneo `fs` sobre el código fuente buscando vulnerabilidades `CRITICAL` y `HIGH`.
+- Sube los hallazgos como reporte SARIF al apartado **Security › Code scanning alerts** y como artefacto descargable (`trivy-report`).
+
+> ℹ️ Ambos pipelines se ejecutan automáticamente en `push` a `main` y en cada pull request. Puedes forzar una ejecución manual desde la pestaña **Actions** cuando actualices dependencias o infraestructura.
+
 ## 🔄 Flujo de autenticación opcional
 
 1. Desde la navbar, ve a la página `/auth` para registrarte o iniciar sesión.
