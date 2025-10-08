@@ -44,10 +44,10 @@ Portafolio personal construido con Next.js (App Router) y TypeScript. El mismo p
 
 ## 🔐 Variables de entorno
 
-En desarrollo se usa un secreto por defecto, pero en producción define un archivo `.env.local` (puedes partir de `.env.example`):
+En desarrollo se usa un secreto por defecto, pero en producción define un archivo `.env.local`:
 
 ```bash
-JWT_SECRET="coloca_aqui_una_clave_segura_de_16+_caracteres"
+JWT_SECRET="KKmQDXSpsn7dG9U71oF5Iy2xjC3bQ9f0nVTZRMkuvG4YqQ5Xl0A2h7cXvXz8Lj1w"
 ```
 
 Sin este valor, los endpoints `/api/auth/register` y `/api/auth/login` devolverán un error 500 al intentar generar el JWT.
@@ -87,22 +87,66 @@ Este repositorio incluye workflows de GitHub Actions para mantener la calidad de
 
 ### SonarCloud
 
-- Workflow: `.github/workflows/sonarcloud.yml`
-- Ejecuta `pnpm test:coverage` y envía los resultados a SonarCloud.
-- Configura los siguientes secretos en tu repositorio antes de ejecutar el pipeline:
-	- `SONAR_TOKEN`: token generado desde SonarCloud.
-	- `SONAR_PROJECT_KEY`: identificador único del proyecto (por ejemplo, `mi-org_portfolio`).
-	- `SONAR_ORGANIZATION`: organización de SonarCloud.
-- Desactiva *Automatic Analysis* en la configuración del proyecto de SonarCloud (Project Settings ▸ General Settings ▸ Analysis Method) para evitar conflictos con el análisis ejecutado por CI.
-- Opcional: añade tu enlace de SonarCloud al README para compartir el reporte público.
+Workflow configurado en `.github/workflows/sonarcloud.yml` que ejecuta `pnpm test:coverage` y envía los resultados a SonarCloud.
+
+Configuración requerida en GitHub Secrets:
+- `SONAR_TOKEN`: token generado desde SonarCloud
+- `SONAR_PROJECT_KEY`: identificador único del proyecto
+- `SONAR_ORGANIZATION`: organización de SonarCloud
+
+Desactiva *Automatic Analysis* en Project Settings ▸ General Settings ▸ Analysis Method para evitar conflictos con el análisis ejecutado por CI.
+
+![Sonar Dashboard](../Portafolio/docs/images/image.png)
 
 ### Trivy Security
 
-- Workflow: `.github/workflows/trivy.yml`
-- Realiza un escaneo `fs` sobre el código fuente buscando vulnerabilidades `CRITICAL` y `HIGH`.
-- Sube los hallazgos como reporte SARIF al apartado **Security › Code scanning alerts** y como artefacto descargable (`trivy-report`).
+Workflow configurado en `.github/workflows/trivy.yml` que realiza un escaneo sobre el código fuente buscando vulnerabilidades `CRITICAL` y `HIGH`. Los hallazgos se suben como reporte SARIF al apartado **Security › Code scanning alerts** y como artefacto descargable.
 
-> ℹ️ Ambos pipelines se ejecutan automáticamente en `push` a `main` y en cada pull request. Puedes forzar una ejecución manual desde la pestaña **Actions** cuando actualices dependencias o infraestructura.
+#### Implementación del Pipeline
+
+```yaml
+name: Security - Trivy
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  trivy:
+    name: Run Trivy file system scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run Trivy (filesystem)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: fs
+          format: sarif
+          output: trivy-results.sarif
+          severity: CRITICAL,HIGH
+
+      - name: Upload to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: trivy-results.sarif
+```
+
+#### Qué detecta Trivy
+
+Trivy escanea el proyecto en busca de:
+- Vulnerabilidades conocidas en dependencias de npm
+- Configuraciones inseguras en archivos del proyecto
+- Secretos o credenciales expuestas accidentalmente
+- Problemas de seguridad en librerías desactualizadas
+
+Los resultados se clasifican por severidad y se pueden revisar en la pestaña Security del repositorio, facilitando la identificación y corrección de problemas antes de llegar a producción.
+
+Ambos pipelines se ejecutan automáticamente en `push` a `main` y en cada pull request. Puedes forzar una ejecución manual desde la pestaña **Actions** cuando actualices dependencias o infraestructura.
 
 ## 🔄 Flujo de autenticación opcional
 
