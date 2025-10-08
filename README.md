@@ -96,7 +96,7 @@ Configuración requerida en GitHub Secrets:
 
 Desactiva *Automatic Analysis* en Project Settings ▸ General Settings ▸ Analysis Method para evitar conflictos con el análisis ejecutado por CI.
 
-![Sonar Dashboard](../Portafolio/docs/images/image.png)
+![Sonar Dashboard](./docs/images/image.png)
 
 ### Trivy Security
 
