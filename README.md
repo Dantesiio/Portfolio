@@ -93,6 +93,7 @@ Este repositorio incluye workflows de GitHub Actions para mantener la calidad de
 	- `SONAR_TOKEN`: token generado desde SonarCloud.
 	- `SONAR_PROJECT_KEY`: identificador único del proyecto (por ejemplo, `mi-org_portfolio`).
 	- `SONAR_ORGANIZATION`: organización de SonarCloud.
+- Desactiva *Automatic Analysis* en la configuración del proyecto de SonarCloud (Project Settings ▸ General Settings ▸ Analysis Method) para evitar conflictos con el análisis ejecutado por CI.
 - Opcional: añade tu enlace de SonarCloud al README para compartir el reporte público.
 
 ### Trivy Security
